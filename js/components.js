@@ -70,6 +70,12 @@ components.chat = `
   </div>
 
   <div class='main'>
+    <div class="conversation-list" id="conversation-list">
+        <div class="create-conversation">
+            <button id="create-conversation" class="btn"> + New Conversation</button>
+        </div>
+    </div>
+
     <div class='conversation-detail'>
       <div id='conversation-name' class='conversation-header'>
         Techkids Chat
