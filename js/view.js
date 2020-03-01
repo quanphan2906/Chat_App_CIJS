@@ -70,6 +70,40 @@ view.setActiveScreen = screenName => {
       });
 
       model.loadConversations();
+
+      document
+        .getElementById("create-conversation")
+        .addEventListener("click", e => {
+          view.setActiveScreen("createConversation");
+        });
+
+      document.getElementById("message-input").addEventListener("click", () => {
+        view.removeNotification(model.activeConversation.id);
+      });
+      break;
+    case "createConversation":
+      document.getElementById("app").innerHTML = components.createConversation;
+
+      document
+        .getElementById("cancel-create-conversation")
+        .addEventListener("click", e => {
+          view.backToChatScreen();
+        });
+
+      const createConversationForm = document.getElementById(
+        "create-conversation-form"
+      );
+      createConversationForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        const conversationName = createConversationForm.conversationName.value;
+        const friendEmail = createConversationForm.friendEmail.value;
+
+        controller.createConversation({
+          conversationName,
+          friendEmail
+        });
+      });
       break;
   }
 };
@@ -110,11 +144,78 @@ view.addConversation = conversationObj => {
   conversationContainer.id = conversationObj.id;
   conversationContainer.appendChild(conversationName);
 
+  const conversationNoti = document.createElement("span");
+  conversationNoti.classList.add("notification");
+  conversationNoti.innerText = "new";
+  conversationContainer.appendChild(conversationNoti);
+
   if (conversationObj.id === model.activeConversation.id) {
     conversationContainer.classList.add("selected-conversation");
   }
 
+  conversationContainer.addEventListener("click", e => {
+    view.removeNotification(conversationObj.id);
+    controller.changeActiveConversation(conversationObj.id);
+  });
+
   document
     .getElementById("conversation-list")
     .appendChild(conversationContainer);
+};
+
+view.changeActiveConversation = () => {
+  document.getElementById("conversation-name").innerText =
+    model.activeConversation.name;
+  document
+    .querySelector(".selected-conversation")
+    .classList.remove("selected-conversation");
+  //co khac gi document.getElementsByClassName("selected-conversation")[0] khong?
+  document
+    .getElementById(model.activeConversation.id)
+    .classList.add("selected-conversation");
+  document.getElementById("conversation-messages").innerHTML = "";
+  for (let message of model.activeConversation.messages) {
+    view.addMessage(message);
+  }
+};
+
+view.backToChatScreen = () => {
+  //mount chat screen
+  document.getElementById("app").innerHTML = components.chat;
+
+  //add message form listener
+  const messageForm = document.getElementById("message-form");
+  messageForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const newMessage = messageForm.message.value;
+    controller.addMessage(newMessage);
+
+    messageForm.message.value = "";
+  });
+
+  document
+    .getElementById("create-conversation")
+    .addEventListener("click", e => {
+      view.setActiveScreen("createConversation");
+    });
+  console.log("model.conversations from VIEW", model.conversations);
+  for (let conversation of model.conversations) {
+    view.addConversation(conversation);
+  }
+  for (let message of model.activeConversation.messages) {
+    view.addMessage(message);
+  }
+};
+
+view.showNotification = conversationId => {
+  const conversation = document.getElementById(conversationId);
+  //conversation now points to the container
+  //conversation.lastChild is the noti badge, as we have added it the last
+  conversation.lastChild.style.display = "inline-block";
+};
+
+view.removeNotification = conversationId => {
+  const conversation = document.getElementById(conversationId);
+  conversation.lastChild.style.display = "none";
 };

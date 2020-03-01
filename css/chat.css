@@ -110,7 +110,7 @@
 }
 
 .chat-container .main .conversation-list .selected-conversation {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .chat-container .main .conversation-list .create-conversation {
@@ -125,4 +125,15 @@
   background-color: #4482ff;
   color: white;
   border-color: #4482ff;
+}
+
+.chat-container .main .conversation-list .notification {
+  margin-right: 12px;
+  display: none;
+  background: #f81d22;
+  color: #ffffff;
+  border-radius: 4px;
+  height: 24px;
+  line-height: 24px;
+  padding: 0px 4px;
 }

@@ -94,3 +94,31 @@ components.chat = `
   </div>
 </div>
 `;
+
+components.createConversation = `
+<div class="create-conversation-container">
+    <div class="header">
+        Techkids Chat
+    </div>
+
+    <div class="main">
+        <h3>Create new conversation</h3>
+        <form id="create-conversation-form" class="conversation-form">
+            <div>
+                <input class="input" id="conversationName" name="conversationName" type="text" placeholder="Conversation name"></input>
+                <div id="conversation-name-error" class="error"></div>
+            </div>
+
+            <div>
+                <input class="input" id="friendEmail" name="friendEmail" type="text" placeholder="Friend email"></input>
+                <div id="friend-email-error" class="error"></div>
+            </div>
+
+            <div>
+                <button class="btn" type="submit" id="submit">Create</button>
+                <button class="btn" id="cancel-create-conversation">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+`;
