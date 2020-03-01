@@ -45,6 +45,10 @@ model.loadConversations = async () => {
         for (let conversation of model.conversations) {
           view.addConversation(conversation);
         }
+
+        for (let member of model.activeConversation.users) {
+          view.addMember(member);
+        }
       } else {
         for (const item of snapShot.docChanges()) {
           const conversation = {
@@ -86,7 +90,6 @@ model.changeActiveConversation = newActiveConversationId => {
   model.activeConversation = model.conversations.filter(
     item => item.id === newActiveConversationId
   )[0];
-  console.log("model.conversations from MODEL", model.conversations);
   view.changeActiveConversation();
 };
 

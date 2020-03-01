@@ -80,6 +80,22 @@ view.setActiveScreen = screenName => {
       document.getElementById("message-input").addEventListener("click", () => {
         view.removeNotification(model.activeConversation.id);
       });
+
+      const addMemberForm = document.getElementById("add-member-form");
+      console.log(
+        "document.getElementById('add-member-form')",
+        document.getElementById("add-member-form")
+      );
+      console.log("addMemberForm", addMemberForm);
+      addMemberForm.addEventListener("submit", e => {
+        e.preventDefault();
+
+        controller.addMember({
+          newMember: addMemberForm.memberEmail.value
+        });
+
+        addMemberForm.memberEmail.value = "";
+      });
       break;
     case "createConversation":
       document.getElementById("app").innerHTML = components.createConversation;
@@ -161,6 +177,32 @@ view.addConversation = conversationObj => {
   document
     .getElementById("conversation-list")
     .appendChild(conversationContainer);
+
+  const mediaQueryResult = window.matchMedia("screen and (max-width: 768px)");
+  if (mediaQueryResult.matches) {
+    const conversationElement = document.getElementById(conversationObj.id);
+    const firstLetter = conversationObj.name.charAt(0).toUpperCase();
+    conversationElement.firstChild.innerText = firstLetter;
+
+    document.getElementById("create-conversation").innerText = "+";
+  }
+  //caution: addListener not addEventListener
+  //listen if mediaQueryResult has changed, if changes and matches
+  mediaQueryResult.addListener(mediaQuery => {
+    if (mediaQuery.matches) {
+      const conversationElement = document.getElementById(conversationObj.id);
+      const firstLetter = conversationObj.name.charAt(0).toUpperCase();
+      conversationElement.firstChild.innerText = firstLetter;
+
+      document.getElementById("create-conversation").innerText = "+";
+    } else {
+      const conversationElement = document.getElementById(conversationObj.id);
+      conversationElement.firstChild.innerText = conversationObj.name;
+
+      document.getElementById("create-conversation").innerText =
+        "+ New conversation";
+    }
+  });
 };
 
 view.changeActiveConversation = () => {
@@ -176,6 +218,11 @@ view.changeActiveConversation = () => {
   document.getElementById("conversation-messages").innerHTML = "";
   for (let message of model.activeConversation.messages) {
     view.addMessage(message);
+  }
+
+  document.getElementById("member-list").innerHTML = "";
+  for (let member of model.activeConversation.users) {
+    view.addMember(member);
   }
 };
 
@@ -199,13 +246,36 @@ view.backToChatScreen = () => {
     .addEventListener("click", e => {
       view.setActiveScreen("createConversation");
     });
-  console.log("model.conversations from VIEW", model.conversations);
+
+  //add conversation to conversation list
   for (let conversation of model.conversations) {
     view.addConversation(conversation);
   }
+
+  //add messages to active conversation
   for (let message of model.activeConversation.messages) {
     view.addMessage(message);
   }
+
+  //render member list
+  for (let member of model.activeConversation.users) {
+    view.addMember(member);
+  }
+
+  //add member form listener
+  const addMemberForm = document.getElementById("add-member-form");
+  console.log("addMemberForm", addMemberForm);
+  addMemberForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const newMemberEmail = addMemberForm.memberEmail.value;
+    console.log("newMemberEmail", newMemberEmail);
+    controller.addMember({
+      newMember: newMemberEmail
+    });
+
+    addMemberForm.memberEmail.value = "";
+  });
 };
 
 view.showNotification = conversationId => {
@@ -218,4 +288,11 @@ view.showNotification = conversationId => {
 view.removeNotification = conversationId => {
   const conversation = document.getElementById(conversationId);
   conversation.lastChild.style.display = "none";
+};
+
+view.addMember = memberEmail => {
+  const member = document.createElement("div");
+  member.classList.add("member");
+  member.innerHTML = `<i>#${memberEmail}</i>`;
+  document.getElementById("member-list").appendChild(member);
 };

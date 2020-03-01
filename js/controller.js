@@ -126,3 +126,15 @@ controller.createConversation = newConversationObj => {
     model.createConversation(newConversationObj);
   }
 };
+
+controller.addMember = newMemberInfo => {
+  if (!newMemberInfo.newMember) {
+    view.setMessage("member-email-error", "Please input new member's email");
+  } else {
+    view.setMessage("member-email-error", "");
+  }
+
+  if (newMemberInfo.newMember) {
+    model.addMember(newMemberInfo);
+  }
+};

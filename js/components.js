@@ -58,6 +58,8 @@ components.login = `
                     <div id="havent-had-account" class="margin-top-12px" style="margin-left: 1px;">Haven't had account? Register!</div>
                     <button class="button-primary btn center margin-top-12px" style="margin-right: 0px">Log in</button>
                 </div>
+
+                <div class="margin-top-12px form-error" id="form-error"></div>
             </form>
         </div>
     </div>
@@ -90,6 +92,17 @@ components.chat = `
           <button class='button' type='submit'>Send</button>
         </div>
       <form>
+    </div>
+
+    <div class="conversation-members" id="conversation-members">
+        <div id="member-list" class="member-list"></div>
+
+        <form class="add-member id="add-member-form""></form>
+        <form class="add-member" id="add-member-form" name="add-member-form">
+            <input class="input" id="add-member-input" name="memberEmail" placeholder="Email..."></input>
+            <div id="member-email-error" class="error"></div>
+            <button class="btn" id="add-member-button">Add member</button>
+        </form>
     </div>
   </div>
 </div>
