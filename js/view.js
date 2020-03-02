@@ -247,6 +247,19 @@ view.backToChatScreen = () => {
       view.setActiveScreen("createConversation");
     });
 
+  //add member form listener
+  const addMemberForm = document.getElementById("add-member-form");
+  addMemberForm.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const newMemberEmail = addMemberForm.memberEmail.value;
+    controller.addMember({
+      newMember: newMemberEmail
+    });
+
+    addMemberForm.memberEmail.value = "";
+  });
+
   //add conversation to conversation list
   for (let conversation of model.conversations) {
     view.addConversation(conversation);
@@ -261,21 +274,6 @@ view.backToChatScreen = () => {
   for (let member of model.activeConversation.users) {
     view.addMember(member);
   }
-
-  //add member form listener
-  const addMemberForm = document.getElementById("add-member-form");
-  console.log("addMemberForm", addMemberForm);
-  addMemberForm.addEventListener("submit", e => {
-    e.preventDefault();
-
-    const newMemberEmail = addMemberForm.memberEmail.value;
-    console.log("newMemberEmail", newMemberEmail);
-    controller.addMember({
-      newMember: newMemberEmail
-    });
-
-    addMemberForm.memberEmail.value = "";
-  });
 };
 
 view.showNotification = conversationId => {

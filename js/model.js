@@ -59,27 +59,49 @@ model.loadConversations = async () => {
           if (item.type === "modified") {
             for (let i = 0; i < model.conversations.length; i++) {
               if (model.conversations[i].id === conversation.id) {
-                model.conversations[i] = conversation;
-                //if other users text something, render noti
                 if (
+                  conversation.messages.length !==
+                    model.conversations[i].messages.length &&
                   conversation.messages[conversation.messages.length - 1]
                     .user !== model.authUser.email
                 ) {
+                  model.conversations[i] = conversation;
+                  console.log("model.conversations[i]", model.conversations[i]);
                   view.showNotification(conversation.id);
+                } else if (
+                  conversation.users.length !==
+                  model.conversations[i].users.length
+                ) {
+                  model.conversations[i] = conversation;
+                  view.showNotification(conversation.id);
+                  console.log("model.conversations[i]", model.conversations[i]);
                 }
               }
             }
 
             if (conversation.id === model.activeConversation.id) {
-              model.activeConversation = conversation;
-              view.addMessage(
-                conversation.messages[conversation.messages.length - 1]
-              );
+              console.log("conversation", conversation);
+              console.log("model.activeConversation", model.activeConversation);
+              if (
+                conversation.messages.length !==
+                model.activeConversation.messages.length
+              ) {
+                model.activeConversation = conversation;
+                view.addMessage(
+                  conversation.messages[conversation.messages.length - 1]
+                );
+              } else {
+                model.activeConversation = conversation;
+                view.addMember(
+                  conversation.users[conversation.users.length - 1]
+                );
+              }
             }
           } else if (item.type === "added") {
+            model.conversations.push(conversation);
+            model.activeConversation = conversation;
             view.addConversation(conversation);
             view.showNotification(conversation.id);
-            model.conversations.push(conversation);
           }
         }
       }
@@ -104,4 +126,15 @@ model.createConversation = async newConversationObj => {
   const db = firebase.firestore();
   db.collection("conversations").add(newConversation);
   view.backToChatScreen();
+};
+
+model.addMember = newMemberInfo => {
+  const db = firebase.firestore();
+
+  db.collection("conversations")
+    .doc(model.activeConversation.id)
+    .update({
+      users: firebase.firestore.FieldValue.arrayUnion(newMemberInfo.newMember)
+    });
+  console.log("newMemberInfo.newMember", newMemberInfo.newMember);
 };
